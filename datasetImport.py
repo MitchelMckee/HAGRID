@@ -6,7 +6,7 @@ import random
 import matplotlib.pyplot as plt
 
 #DATASET PARAMS
-IMG_FOLDER = r'/Users/mitchelmckee/Desktop/HAGRID/dataset/' 
+IMG_FOLDER = r'../dataset/' 
 IMG_SIZE = 50
 CATEGORIES = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
 
