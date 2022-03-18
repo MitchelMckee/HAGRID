@@ -1,9 +1,9 @@
 import os
 import cv2 as cv
-from natsort import natsorted, ns    
+from natsort import natsorted
 
 capture = cv.VideoCapture(0)
-path = '/Users/mitchelmckee/Desktop/screenshots/'
+path = '/Users/mitchelmckee/Desktop/HAGRID/screenshots/'
 
 def newFileName():
     folder = os.fsencode(path)
