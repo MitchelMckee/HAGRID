@@ -1,6 +1,8 @@
 from __future__ import print_function
 import numpy as np
 import keras
+import cv2
+import os
 from keras.datasets import mnist
 from keras.models import Sequential
 from keras.layers import Dense, Dropout, Flatten
@@ -8,65 +10,44 @@ from keras.layers import Conv2D, MaxPooling2D
 from keras.losses import categorical_crossentropy
 from keras import backend as K
 
-num_classes = 10
+#SAVE MODEL
+import pandas
+from sklearn import model_selection
+from sklearn.linear_model import LogisticRegression
+import joblib
+import pickle
+
+#PARAMS
+letter_classes = 26
 batch_size = 128
 epochs = 5
 
-img_rows, img_cols = 28, 28
+#DATASET PARAMS
+img_folder = '/Users/mitchelmckee/Desktop/HAGRID/dataset/img'
+img_width, img_height = 28, 28
 
-(x_train, y_train), (x_test, y_test) = mnist.load_data()
-x_train.size
+def create_dataset(img_folder):
+   
+    img_data_array=[]
+    class_name=[]
+   
+    for dir1 in os.listdir(img_folder):
+        for file in os.listdir(os.path.join(img_folder, dir1)):
+       
+            image_path= os.path.join(img_folder, dir1,  file)
+            image= cv2.imread( image_path, cv2.COLOR_BGR2RGB)
+            image=cv2.resize(image, (img_height, img_width),interpolation = cv2.INTER_AREA)
+            image=np.array(image)
+            image = image.astype('float32')
+            image /= 255 
+            img_data_array.append(image)
+            class_name.append(dir1)
+    return img_data_array, class_name
+   
 
-x_train = x_train[:5000, :,:]
-y_train = y_train[:5000]
-x_test = x_test[:5000, :,:]
-y_test = y_test[:5000]
-x_train.shape
+img_data, class_name = create_dataset(r'/Users/mitchelmckee/Desktop/HAGRID/dataset/img_subset')
 
-x_train = x_train.reshape(x_train.shape[0], img_rows, img_cols, 1)
-x_test = x_test.reshape(x_test.shape[0], img_rows, img_cols, 1)
-input_shape = (img_rows, img_cols, 1)
+target_dict = {k: v for v, k in enumerate(np.unique(class_name))}
+print(target_dict)
 
-x_train = x_train.astype('float32')
-x_test = x_test.astype('float32')
-x_train /= 255 # This converts the pixel values from between 0 and 255 to between 0 and 1
-x_test /= 255
-print('x_train shape:', x_train.shape)
-print(x_train.shape[0], 'train samples')
-print(x_test.shape[0], 'test samples')
-
-# convert class vectors to binary class matrices
-y_train = keras.utils.np_utils.to_categorical(y_train, num_classes)
-y_test = keras.utils.np_utils.to_categorical(y_test, num_classes)
-
-y_train.shape
-
-model = Sequential()
-model.add(Conv2D(32, kernel_size=(3, 3),
-                 activation='relu',
-                 input_shape=input_shape))
-model.add(Conv2D(64, (3, 3), activation='relu'))
-model.add(MaxPooling2D(pool_size=(2, 2))) 
-model.add(Dropout(0.3))
-model.add(Flatten()) # This line is to convert from matrices to vectors
-model.add(Dense(128, activation='relu'))
-model.add(Dropout(0.3))
-model.add(Dense(num_classes, activation='softmax')) # we are working with vectors now, so we use a Dense layer instead of Conv2d
-model.summary()
-
-model.compile(loss=categorical_crossentropy,
-              optimizer='adam',
-              metrics=['accuracy'])
-
-model.fit(x_train, y_train,
-          batch_size=batch_size,
-          epochs=epochs,
-          verbose=1,
-          validation_data=(x_test, y_test))
-score = model.evaluate(x_test, y_test, verbose=0)
-
-print('Test loss:', score[0])
-print('Test accuracy:', score[1])
-
-
-
+#(x_train, y_train), (x_test, y_test) = 
