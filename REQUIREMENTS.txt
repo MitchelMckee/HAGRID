@@ -3,3 +3,7 @@ opencv-python
 pickle-mixin
 matplotlib
 natsort
+keras
+tensorflow
+sklearn
+pandas
