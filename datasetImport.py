@@ -1,8 +1,6 @@
-from venv import create
 import numpy as np
 import cv2
 import os
-import pickle 
 import random
 import matplotlib.pyplot as plt
 
@@ -24,7 +22,7 @@ for category in CATEGORIES:
         break
     break
 
-new_array = cv2.resize(img_array, (IMG_SIZE, IMG_SIZE))
+new_array = cv2.resize(img_array, (IMG_SIZE, IMG_SIZE)) # CHANGE ALL IMAGES TO 50 x 50
 plt.imshow(new_array)
 #plt.show()
 
