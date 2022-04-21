@@ -1,33 +1,35 @@
 from __future__ import print_function
-from random import triangular
+
+import keras
+from sklearn import metrics
 from keras.models import Sequential
-from keras.layers import Dense, Dropout, Flatten
+from keras.layers import Dense, Dropout, Flatten, Activation
 from keras.layers import Conv2D, MaxPooling2D
+from keras.layers import BatchNormalization
 from keras.losses import categorical_crossentropy
 from keras import backend as K
+from keras.utils import np_utils
 
-import numpy as np
+
 import numpy as np
 import cv2
 import os
 import random
 import matplotlib.pyplot as plt
 
+
 training_data = []
 
 IMG_FOLDER = r'./dataset/' 
 IMG_SIZE = 50
 
-#CATEGORIES = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
-CATEGORIES = ['a', 'b']
+CATEGORIES = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
+#CATEGORIES = ['a', 'b']
 
 input_shape = (IMG_SIZE, IMG_SIZE, 1)
 num_classes = 26
-batch_size = 128
-epochs = 10
-
-#x_test = training_data[:round(len(training_data)/2)]
-#x_train = training_data[round(len(training_data)/2):]
+batch_size = 64
+epochs = 2
 
 for category in CATEGORIES:
     path = os.path.join(IMG_FOLDER, category)
@@ -47,12 +49,10 @@ def create_training_data():
             new_array = cv2.resize(img_array, (IMG_SIZE, IMG_SIZE))
             training_data.append([new_array, class_num])
            
-      
-
     return training_data
 
-random.shuffle(training_data)
 create_training_data()
+random.shuffle(training_data)
 
 X = []
 y = []
@@ -66,28 +66,36 @@ y = np.array(y)
 
 X = X/255.0
 
+x_test = X[:round(len(training_data)/2)]
+x_train = X[round(len(training_data)/2):]
+y_test = y[:round(len(training_data)/2)]
+y_train = y[round(len(training_data)/2):]
 
+print(x_train.shape, 'x train shape')
+print(x_train.shape[0], 'train sample')
+print(x_test.shape[0], 'test sample')
 
+y_train = keras.utils.np_utils.to_categorical(y_train, num_classes)
+y_test = keras.utils.np_utils.to_categorical(y_test, num_classes)
+
+print(y_train.shape, 'y_train shape')
 
 ####################################################################################################################################################
 
 model = Sequential()
-model.add(Conv2D(32, kernel_size=(3, 3),activation='relu', input_shape=input_shape))
-model.add(Conv2D(64, (3, 3), activation='relu'))
-model.add(MaxPooling2D(pool_size=(2, 2))) 
-model.add(Dropout(0.3))
-model.add(Flatten()) # This line is to convert from matrices to vectors
-model.add(Dense(128, activation='relu'))
-model.add(Dropout(0.3))
-model.add(Dense(num_classes, activation='softmax')) # we are working with vectors now, so we use a Dense layer instead of Conv2d
+#model.add(Conv2D(32, kernel_size=(3, 3),activation='relu', input_shape=input_shape))
+model.add(Conv2D(32, (3, 3), input_shape=input_shape, padding='same'))
+model.add(BatchNormalization())
 model.summary()
+
+
 model.compile(loss=categorical_crossentropy,
               optimizer='adam',
               metrics=['accuracy'])
 
-model.fit(X, y,
+model.fit(x_train, y_train,
           batch_size=batch_size,
           epochs=epochs,
           verbose=1,
-          validation_data=(X, y))
-score = model.evaluate(X, y, verbose=0)
+          validation_data=(x_test, y_test))
+score = model.evaluate(x_test, y_test, verbose=0)
