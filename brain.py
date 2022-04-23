@@ -6,10 +6,9 @@ from keras.models import Sequential
 from keras.layers import Dense, Dropout, Flatten, Activation
 from keras.layers import Conv2D, MaxPooling2D
 from keras.layers import BatchNormalization
-from keras.losses import categorical_crossentropy
+from keras.losses import categorical_crossentropy, sparse_categorical_crossentropy
 from keras import backend as K
 from keras.utils import np_utils
-
 
 import numpy as np
 import cv2
@@ -53,7 +52,6 @@ def create_training_data():
 
 create_training_data()
 random.shuffle(training_data)
-
 X = []
 y = []
 
@@ -61,33 +59,46 @@ for features, label in training_data:
     X.append(features)
     y.append(label)
 
-X = np.array(X).reshape(-1, IMG_SIZE, IMG_SIZE ,1)
+#X = np.array(X).reshape(-1, IMG_SIZE, IMG_SIZE ,1)
+X = np.array(X)
 y = np.array(y)
-
-X = X/255.0
 
 x_test = X[:round(len(training_data)/2)]
 x_train = X[round(len(training_data)/2):]
 y_test = y[:round(len(training_data)/2)]
 y_train = y[round(len(training_data)/2):]
 
-print(x_train.shape, 'x train shape')
-print(x_train.shape[0], 'train sample')
-print(x_test.shape[0], 'test sample')
+#x_train = x_train / 255
+#x_test = x_test / 255 
+
+x_train = x_train.reshape(-1, IMG_SIZE, IMG_SIZE, 1)
+x_test = x_test.reshape(-1, IMG_SIZE, IMG_SIZE, 1)
+
+
+
+print('-----------------------------------------')
+print(x_train.shape, 'x_train shape')
+print(x_test.shape, 'x_test shape')
+print(x_train.shape[0], 'x_train sample')
+print(x_test.shape[0], 'x_test sample')
+print('-----------------------------------------')
+print(y_train.shape, 'y_train shape')
+print(y_test.shape, 'y_test shape')
+print(y_train[0], 'y_train sample')
+print(y_test[0], 'y_test sample')
+print('-----------------------------------------')
 
 y_train = keras.utils.np_utils.to_categorical(y_train, num_classes)
 y_test = keras.utils.np_utils.to_categorical(y_test, num_classes)
-
-print(y_train.shape, 'y_train shape')
 
 ####################################################################################################################################################
 
 model = Sequential()
 #model.add(Conv2D(32, kernel_size=(3, 3),activation='relu', input_shape=input_shape))
 model.add(Conv2D(32, (3, 3), input_shape=input_shape, padding='same'))
+model.add(Flatten())
 model.add(BatchNormalization())
 model.summary()
-
 
 model.compile(loss=categorical_crossentropy,
               optimizer='adam',
