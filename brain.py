@@ -28,7 +28,7 @@ CATEGORIES = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', '
 input_shape = (IMG_SIZE, IMG_SIZE, 1)
 num_classes = 26
 batch_size = 64
-epochs = 2
+epochs = 50
 
 for category in CATEGORIES:
     path = os.path.join(IMG_FOLDER, category)
@@ -37,7 +37,6 @@ for category in CATEGORIES:
         plt.imshow(img_array)
         break
     break
-
 new_array = cv2.resize(img_array, (IMG_SIZE, IMG_SIZE)) # CHANGE ALL IMAGES TO 50 x 50
 
 def create_training_data():
@@ -94,7 +93,8 @@ y_test = keras.utils.np_utils.to_categorical(y_test, num_classes)
 model = Sequential()
 #model.add(Conv2D(32, kernel_size=(3, 3),activation='relu', input_shape=input_shape))
 model.add(Conv2D(1, (3, 3), activation='relu', input_shape=input_shape, padding='same'))
-#model.add(Flatten())
+model.add(Flatten())
+model.add(Dense(num_classes, activation='softmax'))
 #model.add(BatchNormalization())
 model.summary()
 
@@ -108,3 +108,6 @@ model.fit(x_train, y_train,
           verbose=1,
           validation_data=(x_test, y_test))
 score = model.evaluate(x_test, y_test, verbose=0)
+
+print('Test loss:', score[0])
+print('Test accuracy:', score[1])
