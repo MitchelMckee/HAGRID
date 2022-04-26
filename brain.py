@@ -74,8 +74,6 @@ y_train = y[round(len(training_data)/2):]
 x_train = x_train.reshape(-1, IMG_SIZE, IMG_SIZE, 1)
 x_test = x_test.reshape(-1, IMG_SIZE, IMG_SIZE, 1)
 
-
-
 print('-----------------------------------------')
 print(x_train.shape, 'x_train shape')
 print(x_test.shape, 'x_test shape')
@@ -95,9 +93,9 @@ y_test = keras.utils.np_utils.to_categorical(y_test, num_classes)
 
 model = Sequential()
 #model.add(Conv2D(32, kernel_size=(3, 3),activation='relu', input_shape=input_shape))
-model.add(Conv2D(32, (3, 3), input_shape=input_shape, padding='same'))
-model.add(Flatten())
-model.add(BatchNormalization())
+model.add(Conv2D(1, (3, 3), activation='relu', input_shape=input_shape, padding='same'))
+#model.add(Flatten())
+#model.add(BatchNormalization())
 model.summary()
 
 model.compile(loss=categorical_crossentropy,
