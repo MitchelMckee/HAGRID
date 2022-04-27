@@ -30,7 +30,7 @@ CATEGORIES = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', '
 input_shape = (IMG_SIZE, IMG_SIZE, 1)
 num_classes = 26
 batch_size = 128
-epochs = 2
+epochs = 10
 
 for category in CATEGORIES:
     path = os.path.join(IMG_FOLDER, category)
@@ -113,11 +113,15 @@ y_test = keras.utils.np_utils.to_categorical(y_test, num_classes)
 
 model = Sequential()
 #model.add(Conv2D(32, kernel_size=(3, 3),activation='relu', input_shape=input_shape))
-model.add(Conv2D(1, (3, 3), activation='relu', input_shape=input_shape, padding='same'))
+model.add(Conv2D(28, kernel_size=(3, 3), activation='relu', input_shape=input_shape, padding='same'))
+model.add(MaxPooling2D(pool_size=(2, 2)))
+model.add(Conv2D(56, kernel_size=(3, 3), activation='relu', padding='same'))
+model.add(MaxPooling2D(pool_size=(2, 2)))
 model.add(Flatten())
-model.add(Dense(num_classes, activation='softmax'))
-model.add(Dropout(0.25))
+#model.add(Dropout(0.3))
 model.add(BatchNormalization())
+model.add(Dense(num_classes, activation='softmax'))
+
 model.summary()
 
 '''
