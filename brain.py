@@ -21,7 +21,7 @@ import matplotlib.pyplot as plt
 training_data = []
 
 IMG_FOLDER = r'./dataset/' 
-IMG_SIZE = 80
+IMG_SIZE = 50
 
 CATEGORIES = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
 #, 'C_A', 'C_B', 'C_C', 'C_D', 'C_E', 'C_F', 'C_G', 'C_H', 'C_I', 'C_J', 'C_K', 'C_L', 'C_M', 'C_N', 'C_O', 'C_P', 'C_Q', 'C_R', 'C_S', 'C_T', 'C_U', 'C_V', 'C_W', 'C_X', 'C_Y', 'C_Z']
@@ -112,6 +112,14 @@ y_test = keras.utils.np_utils.to_categorical(y_test, num_classes)
 ####################################################################################################################################################
 
 model = Sequential()
+model.add(Conv2D(50, kernel_size=(3, 3),activation='relu', input_shape=input_shape))
+model.add(MaxPooling2D(pool_size=(2, 2)))
+model.add(Conv2D(100, kernel_size=(3, 3), activation='relu', input_shape=input_shape, padding='same'))
+model.add(MaxPooling2D(pool_size=(2, 2)))
+model.add(Flatten())
+model.add(Dropout(0.25))
+model.add(Dense(100, activation='relu'))
+model.add(Dense(num_classes, activation='softmax'))
 '''
 #model.add(Conv2D(32, kernel_size=(3, 3),activation='relu', input_shape=input_shape))
 model.add(Conv2D(28, kernel_size=(3, 3), activation='relu', input_shape=input_shape, padding='same'))
@@ -126,7 +134,7 @@ model.add(Dense(128, activation='relu'))
 model.add(Dropout(0.3))
 
 model.add(Dense(num_classes, activation='softmax'))
-'''
+
 model.add(Conv2D(input_shape=input_shape, filters=96, kernel_size=(3,3)))
 model.add(Activation('relu'))
 model.add(Conv2D(filters=96, kernel_size=(3,3), strides=2))
@@ -146,7 +154,7 @@ model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accur
 
 model.summary()
 
-'''
+
 model = Sequential()
 model.add(Conv2D(32, kernel_size=(3, 3),
                  activation='relu',
