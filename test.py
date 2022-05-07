@@ -1,50 +1,19 @@
-import numpy as np
 import cv2
-import os
-import random
-import matplotlib.pyplot as plt
-import keras
-from keras.preprocessing.image import ImageDataGenerator
+import numpy as np
 
+image = cv2.imread('./screenshots/4.png')
+original = image.copy()
 
-training_data = []
+gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+thresh = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU)[1]
 
-IMG_FOLDER = r'./dataset/' 
-IMG_SIZE = 50
-#CATEGORIES = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
-CATEGORIES = ['a', 'b']
+ROI_number = 0
+cnts = cv2.findContours(thresh, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+cnts = cnts[0] if len(cnts) == 2 else cnts[1]
+for c in cnts:
+    x,y,w,h = cv2.boundingRect(c)
+    cv2.rectangle(image, (x, y), (x + w, y + h), (0,0,255), 2)
 
-for category in CATEGORIES:
-    path = os.path.join(IMG_FOLDER, category)
-    for img in os.listdir(path):
-        img_array = cv2.imread(os.path.join(path, img), cv2.IMREAD_GRAYSCALE)
-        break
-    break
-print(img_array.shape)
+cv2.imshow('image', image)
 
-new_array = cv2.resize(img_array, (IMG_SIZE, IMG_SIZE))
-
-training_data = []
-
-def create_training_data():
-    for category in CATEGORIES:
-        class_num = CATEGORIES.index(category)
-        for img in tqdm(os.listdir(path)):
-                img_array = cv2.imread(os.path.join(path, img), cv2.IMREAD_GRAYSCALE)
-                new_array = cv2.resize(img_array, (IMG_SIZE, IMG_SIZE))
-                training_data.append([new_array, class_num])
-
-create_training_data()
-
-random.shuffle(training_data)
-
-X = []
-y = []
-
-for features, label in training_data:
-    X.append(features)
-    y.append(label)
-
-X = np.array(X).reshape(-1, IMG_SIZE, IMG_SIZE, 1)
-y = np.array(y)
-
+cv2.waitKey()

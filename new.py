@@ -3,9 +3,8 @@ from __future__ import print_function
 import keras
 from sklearn import metrics
 from keras.models import Sequential
-from keras.layers import Dense, Dropout, Flatten, Activation
+from keras.layers import Dense, Dropout, Flatten
 from keras.layers import Conv2D, MaxPooling2D
-from keras.layers import BatchNormalization
 from keras.losses import categorical_crossentropy
 from keras import backend as K
 from keras.utils import np_utils
