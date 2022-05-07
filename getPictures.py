@@ -24,12 +24,12 @@ def newFileName():
 def screenshot():
     print('SCREENSHOT')
     newFileName()
-    cv.imwrite(path + filename,capture.read()[1]) # or saves it to disk
+    cv.imwrite(path + filename,capture.read()[1])
 
 def runCam():
     while True:
-        isTrue,frame = capture.read()
-        cv.imshow('Video',frame)
+        isTrue, frame = capture.read()
+        cv.imshow('Video', frame)
         if cv.waitKey(20) & 0xFF==ord('d'):
             break
         if cv.waitKey(20) & 0xFF==ord('s'):

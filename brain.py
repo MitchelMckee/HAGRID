@@ -70,16 +70,7 @@ for features, label in training_data:
 X = np.array(X).reshape(-1, IMG_SIZE, IMG_SIZE, 1)
 y = np.array(y)
 
-pickle_out = open("X.pickle", "wb")
-pickle.dump(X, pickle_out)
-pickle_out.close()
 
-pickle_out = open("y.pickle", "wb")
-pickle.dump(y, pickle_out)
-pickle_out.close()
-
-pickle_in = open("X.pickle", "rb")
-X = pickle.load(pickle_in)
 print(X[1])
 print(y[1])
 
