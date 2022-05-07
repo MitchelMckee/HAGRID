@@ -35,7 +35,7 @@ def create_training_data(training_data):
             img_array = cv2.imread(os.path.join(path,img))
             new_array = cv2.resize(img_array, (IMG_SIZE, IMG_SIZE))
             training_data.append([new_array, class_num])
-           
+            
       
     random.shuffle(training_data)
     #print(len(training_data))    
