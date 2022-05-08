@@ -21,7 +21,7 @@ IMG_SIZE = 50
 input_shape = (IMG_SIZE, IMG_SIZE, 1)
 num_classes = 26
 batch_size = 26
-epochs = 30
+epochs = 12
 
 training_data = []
 
@@ -64,10 +64,12 @@ model = Sequential()
 
 model.add(Conv2D(28, kernel_size=(3, 3), activation="relu", input_shape=input_shape))
 model.add(MaxPooling2D(pool_size=(2, 2)))
+model.add(Dropout(0.2))
 model.add(Conv2D(56, kernel_size=(3, 3), activation="relu"))
 model.add(MaxPooling2D(pool_size=(2, 2)))
+model.add(Dropout(0.5))
 model.add(Flatten())
-model.add(Dropout(0.25))
+model.add(Dropout(0.5))
 model.add(Dense(100, activation="relu"))
 model.add(Dense(num_classes, activation="softmax"))
 
@@ -75,15 +77,33 @@ model.summary()
 
 model.compile(loss = categorical_crossentropy, optimizer='adam', metrics=['accuracy'])
 
-#model.fit(X, y, batch_size = batch_size, epochs=epochs, verbose=1)
-history = model.fit(X, y, batch_size = batch_size, epochs=epochs, verbose=1)
+model.fit(X, y, batch_size = batch_size, epochs=epochs, verbose=1)
+#history = model.fit(X, y, batch_size = batch_size, epochs=epochs, verbose=1)
 score = model.evaluate(X, y, verbose=0)
 print('Test loss:', score[0])
 print('Test accuracy:', score[1])
 
-plt.plot(history.history['accuracy'])
-plt.title('model accuracy')
-plt.ylabel('accuracy')
-plt.xlabel('epoch')
-plt.legend(['train', 'test'], loc='upper left')
-plt.show()
+#plt.plot(history.history['accuracy'])
+#plt.title('model accuracy')
+#plt.ylabel('accuracy')
+#plt.xlabel('epoch')
+#plt.legend(['train', 'test'], loc='upper left')
+#plt.show()
+
+
+def prepare(file):
+    img_array = cv2.imread(file, cv2.IMREAD_GRAYSCALE)
+    new_array = cv2.resize(img_array, (IMG_SIZE, IMG_SIZE))
+    plt.imshow(new_array)
+    plt.show()
+    return new_array.reshape(-1, IMG_SIZE, IMG_SIZE, 1)
+
+#prediction = model.predict([prepare('./predict/Image_7.png')])
+#pred_name = CATEGORIES[np.argmax(prediction)]
+#print(pred_name)
+for i in range(4):
+    prediction = model.predict([prepare('./predict/Image_'+str(i)+'.png')])
+    pred_name = CATEGORIES[np.argmax(prediction)]
+    print(pred_name)
+    i += 1
+#print(prediction)
