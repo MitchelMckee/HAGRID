@@ -1,3 +1,4 @@
+from ast import excepthandler
 from keras.models import Sequential
 from keras.layers import Dense, Dropout, Flatten
 from keras.layers import Conv2D, MaxPooling2D
@@ -11,6 +12,7 @@ import os
 import random
 import matplotlib.pyplot as plt
 
+
 # PARAMS AND GLOBALS
 IMG_FOLDER = r'./dataset/' 
 IMG_SIZE = 50
@@ -19,10 +21,9 @@ num_classes = 26
 batch_size = 26
 epochs = 12
 training_data = []
-
 CATEGORIES = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
 
-def create_training_data():
+def create_training_data(): # TAKE THE TRAINING AND TESTING IMAGES, FORMAT THEM CORRECTLY ADD THEM TO AN ARRAY
     for category in CATEGORIES:
         path = os.path.join(IMG_FOLDER, category)
         class_num = CATEGORIES.index(category)
@@ -32,7 +33,7 @@ def create_training_data():
             new_array = cv2.resize(img_array, (IMG_SIZE, IMG_SIZE))
             training_data.append([new_array, class_num])
 
-def model():
+def model(): # THE TRAINING MODEL AND PREDICTION OUTPUT
 
     X = []
     y = []
@@ -69,14 +70,16 @@ def model():
     print('Test loss:', score[0])
     print('Test accuracy:', score[1])
 
-    prediction = model.predict([preparePred('./dataset/a/img037-025.png')])
-    pred_name = CATEGORIES[np.argmax(prediction)]
-    print(pred_name)
-    print(prediction)
-
+    for file in os.listdir('./predict/'):
+        filename = os.fsdecode(file)
+        prediction = model.predict([preparePred(filename)])
+        pred_name = CATEGORIES[np.argmax(prediction)]
+        print(filename, pred_name)
+    
 def preparePred(file):
-    img_array = cv2.imread(file, cv2.IMREAD_GRAYSCALE)
+    img_array = cv2.imread(os.path.join('./predict/', file), cv2.IMREAD_GRAYSCALE)
     new_array = cv2.resize(img_array, (IMG_SIZE, IMG_SIZE))
+  
     return new_array.reshape(-1, IMG_SIZE, IMG_SIZE, 1)
 
 def main():
@@ -85,7 +88,7 @@ def main():
         for img in os.listdir(path):
             img_array = cv2.imread(os.path.join(path, img))
 
-    new_array = cv2.resize(img_array, (IMG_SIZE, IMG_SIZE))
+    #new_array = cv2.resize(img_array, (IMG_SIZE, IMG_SIZE))
 
     create_training_data()
     random.shuffle(training_data)
@@ -93,4 +96,3 @@ def main():
     model()
 
 main()
-
